@@ -56,27 +56,35 @@ export default function App() {
   },[]);
 
   return (
-    <div>
-      Heya Anadi here :)
-      <br />
-      {
-        text==""?
-        <div>Welcome here...</div>
-        :
-        <div>Going to: {text}</div>
-      }
+    <div className='main'>
+      <img src="bg_ushort.jpeg" className='main-bg' alt="" />
+      <div className='main-body'>
+        <div className="welcome-text">
+          Heya Anadi here :)
+          <br/>
+          Welcome...
+        </div>
+        <br />
+        {
+          text==""?
+          <div></div>
+          :
+          <div>Going to: {text}</div>
+        }
 
-      <br />
+        <br />
 
-      Give input link to be shortened: <input type="text" id='input-link' /> 
-      <br />
-      <button id='generate-link-button' onClick={generateLink}>Generate Link</button>
-      <br />
-      <br />
+        Give input link to be shortened: <input type="text" id='input-link' /> 
+        <br />
+        <button id='generate-link-button' onClick={generateLink}>Generate Link</button>
+        <br />
+        <br />
 
-      Generated link: <output id='output-link'></output>
-      <br />
-      <button id='copy-button' onClick={copyLink}>Copy</button>
+        Generated link: <output id='output-link'></output>
+        <br />
+        <button id='copy-button' onClick={copyLink}>Copy</button>
+
+      </div>
     </div>
   )
 }
