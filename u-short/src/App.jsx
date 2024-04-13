@@ -74,15 +74,23 @@ export default function App() {
 
         <br />
 
-        Give input link to be shortened: <input type="text" id='input-link' /> 
-        <br />
-        <button id='generate-link-button' onClick={generateLink}>Generate Link</button>
-        <br />
-        <br />
+        <div className='cntnr'>
 
-        Generated link: <output id='output-link'></output>
-        <br />
-        <button id='copy-button' onClick={copyLink}>Copy</button>
+          Give input link to be shortened: <input type="text" id='input-link' /> <br />
+          <center>
+            <button id='generate-link-button' className='action-button' onClick={generateLink}>Generate Link</button>
+            <br />
+            <br />
+          </center>
+
+          <hr />
+
+          Generated link: <output id='output-link'></output> <br />
+          <center>
+            <button id='copy-button' className='action-button' onClick={copyLink}>Copy</button>
+          </center>
+
+        </div>
 
       </div>
     </div>
