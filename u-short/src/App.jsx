@@ -33,6 +33,11 @@ export default function App() {
       return;
     }
 
+    // Add https:// if no protocol is specified
+    if (!link.startsWith('http://') && !link.startsWith('https://')) {
+      link = 'https://' + link;
+    }
+
     const encorder = new TextEncoder();
     const hashBuffer = await crypto.subtle.digest('SHA-256', encorder.encode(link));
     const hashArray = Array.from(new Uint8Array(hashBuffer));
@@ -57,17 +62,26 @@ export default function App() {
   
   useEffect(() => {
     async function fetchData() {
-      if (!urls) return;
+      if (!urls || !text) return;
       try {
-        console.log(text);
-        const urlDocRef = doc(urls,text);
-        const docSnap = (await getDoc(urlDocRef)).data();
-        window.location.href = docSnap['to'];
+        console.log('Looking for short code:', text);
+        const urlDocRef = doc(urls, text);
+        const docSnap = await getDoc(urlDocRef);
+        
+        if (docSnap.exists()) {
+          const data = docSnap.data();
+          console.log('Found URL:', data.to);
+          window.location.href = data.to;
+        } else {
+          console.log('No document found for:', text);
+        }
       } catch (err) {
-        console.log(err);
+        console.log('Error fetching redirect:', err);
       }
     }
-    if (text!="") fetchData();
+    if (text && text !== "" && text !== "index.html") {
+      fetchData();
+    }
   },[]);
 
   return (
