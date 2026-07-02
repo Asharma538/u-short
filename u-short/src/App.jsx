@@ -17,12 +17,7 @@ export default function App() {
   const urls = db ? collection(db,'U-Short') : null;
 
   const isValidUrl = (url) => {
-    try {
-      const urlObj = new URL(url);
-      return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
-    } catch {
-      return false;
-    }
+    return url.includes('.');
   }
 
   const generateLink = async () => {
