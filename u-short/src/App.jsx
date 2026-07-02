@@ -4,20 +4,39 @@ import './App.css'
 import { collection, doc, setDoc, getDoc } from "firebase/firestore"; 
 import { initializeApp } from 'firebase/app';
 import { getFirestore } from "@firebase/firestore";
+import BackgroundAnimation from './BackgroundAnimation'
 
-const VITE_FIREBASE_KEY = JSON.parse(import.meta.env.VITE_FIREBASE_KEY);
+const VITE_FIREBASE_KEY = import.meta.env.VITE_FIREBASE_KEY ? JSON.parse(import.meta.env.VITE_FIREBASE_KEY) : null;
 
 
 export default function App() {
-  const app = initializeApp(VITE_FIREBASE_KEY);
-  const db = getFirestore(app);
+  const app = VITE_FIREBASE_KEY ? initializeApp(VITE_FIREBASE_KEY) : null;
+  const db = app ? getFirestore(app) : null;
 
   const text = window.location.href.split('/').pop();
-  const urls = collection(db,'U-Short');
+  const urls = db ? collection(db,'U-Short') : null;
+
+  const isValidUrl = (url) => {
+    try {
+      const urlObj = new URL(url);
+      return urlObj.protocol === 'http:' || urlObj.protocol === 'https:';
+    } catch {
+      return false;
+    }
+  }
 
   const generateLink = async () => {
+    if (!urls) {
+      alert('Firebase not configured. Please set VITE_FIREBASE_KEY environment variable.');
+      return;
+    }
     var link = document.getElementById('input-link').value;
     if (link=="") return;
+
+    if (!isValidUrl(link)) {
+      alert('Please enter a valid URL (e.g., https://example.com)');
+      return;
+    }
 
     const encorder = new TextEncoder();
     const hashBuffer = await crypto.subtle.digest('SHA-256', encorder.encode(link));
@@ -43,6 +62,7 @@ export default function App() {
   
   useEffect(() => {
     async function fetchData() {
+      if (!urls) return;
       try {
         console.log(text);
         const urlDocRef = doc(urls,text);
@@ -57,7 +77,7 @@ export default function App() {
 
   return (
     <div className='main'>
-      <img src="bg_ushort.jpeg" className='main-bg' alt="" />
+      <BackgroundAnimation />
       <div className='main-body'>
         <div className="welcome-text">
           Heya Anadi here :)
@@ -75,21 +95,15 @@ export default function App() {
         <br />
 
         <div className='cntnr'>
-
-          Give input link to be shortened: <input type="text" id='input-link' /> <br />
-          <center>
-            <button id='generate-link-button' className='action-button' onClick={generateLink}>Generate Link</button>
-            <br />
-            <br />
-          </center>
+          <label>Enter URL to shorten</label>
+          <input type="text" id='input-link' placeholder='https://example.com' />
+          <button id='generate-link-button' className='action-button' onClick={generateLink}>Generate Link</button>
 
           <hr />
 
-          Generated link: <output id='output-link'></output> <br />
-          <center>
-            <button id='copy-button' className='action-button' onClick={copyLink}>Copy</button>
-          </center>
-
+          <label>Generated short link</label>
+          <output id='output-link'></output>
+          <button id='copy-button' className='action-button' onClick={copyLink}>Copy Link</button>
         </div>
 
       </div>
